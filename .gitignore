@@ -11,6 +11,8 @@
 *.autosave
 build*/
 Build*/
+CMakeCache.txt
+CMakeFiles/
 Toolchain/Tarballs
 Toolchain/Build
 Toolchain/Local
