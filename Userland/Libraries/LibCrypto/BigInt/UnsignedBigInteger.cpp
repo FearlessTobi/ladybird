@@ -51,9 +51,9 @@ UnsignedBigInteger::UnsignedBigInteger(double value)
 
     FloatExtractor<double> extractor;
     extractor.d = value;
-    VERIFY(!extractor.sign);
+    VERIFY(!extractor.fields.sign);
 
-    i32 real_exponent = extractor.exponent - extractor.exponent_bias;
+    i32 real_exponent = extractor.fields.exponent - extractor.exponent_bias;
     VERIFY(real_exponent > 0);
 
     // Ensure we have enough space, we will need 2^exponent bits, so round up in words
@@ -61,7 +61,7 @@ UnsignedBigInteger::UnsignedBigInteger(double value)
     m_words.resize_and_keep_capacity(word_index);
 
     // Now we just need to put the mantissa with explicit 1 bit at the top at the proper location
-    u64 raw_mantissa = extractor.mantissa | (1ull << extractor.mantissa_bits);
+    u64 raw_mantissa = extractor.fields.mantissa | (1ull << extractor.mantissa_bits);
     VERIFY((raw_mantissa & 0xfff0000000000000) == 0x0010000000000000);
     // Shift it so the bits we need are at the top
     raw_mantissa <<= 64 - extractor.mantissa_bits - 1;
@@ -343,10 +343,10 @@ double UnsignedBigInteger::to_double(UnsignedBigInteger::RoundingMode rounding_m
     }
 
     Extractor extractor;
-    extractor.exponent = highest_bit + extractor.exponent_bias;
+    extractor.fields.exponent = highest_bit + extractor.exponent_bias;
 
     VERIFY((mantissa & 0xfff0000000000000) == 0);
-    extractor.mantissa = mantissa;
+    extractor.fields.mantissa = mantissa;
 
     return extractor.d;
 }
@@ -640,11 +640,11 @@ UnsignedBigInteger::CompareResult UnsignedBigInteger::compare_to_double(double v
     extractor.d = value;
 
     // Value cannot be negative at this point.
-    VERIFY(extractor.sign == 0);
+    VERIFY(extractor.fields.sign == 0);
     // Exponent cannot be all set, as then we must be NaN or infinity.
-    VERIFY(extractor.exponent != (1 << extractor.exponent_bits) - 1);
+    VERIFY(extractor.fields.exponent != (1 << extractor.exponent_bits) - 1);
 
-    i32 real_exponent = extractor.exponent - extractor.exponent_bias;
+    i32 real_exponent = extractor.fields.exponent - extractor.exponent_bias;
     if (real_exponent < 0) {
         // value is less than 1, and we cannot be zero so value must be less.
         return CompareResult::DoubleLessThanBigInt;
@@ -666,7 +666,7 @@ UnsignedBigInteger::CompareResult UnsignedBigInteger::compare_to_double(double v
     if (bigint_bits_needed < double_bits_needed)
         return CompareResult::DoubleGreaterThanBigInt;
 
-    u64 mantissa_bits = extractor.mantissa;
+    u64 mantissa_bits = extractor.fields.mantissa;
 
     // We add the bit which represents the 1. of the double value calculation.
     constexpr u64 mantissa_extended_bit = 1ull << extractor.mantissa_bits;

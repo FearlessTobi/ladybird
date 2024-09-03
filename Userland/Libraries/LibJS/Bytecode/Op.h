@@ -323,7 +323,7 @@ private:
     Operand m_dst;
     Operand m_from_object;
     size_t m_excluded_names_count { 0 };
-    Operand m_excluded_names[];
+    Operand m_excluded_names[0];
 };
 
 // NOTE: This instruction is variable-width depending on the number of elements!
@@ -368,7 +368,7 @@ public:
 private:
     Operand m_dst;
     size_t m_element_count { 0 };
-    Operand m_elements[];
+    Operand m_elements[0];
 };
 
 class NewPrimitiveArray final : public Instruction {
@@ -402,7 +402,7 @@ public:
 private:
     Operand m_dst;
     size_t m_element_count { 0 };
-    Value m_elements[];
+    Value m_elements[0];
 };
 
 class AddPrivateName final : public Instruction {
@@ -1774,7 +1774,7 @@ private:
     CallType m_type;
     Optional<Builtin> m_builtin;
     Optional<StringTableIndex> m_expression_string;
-    Operand m_arguments[];
+    Operand m_arguments[0];
 };
 
 class CallWithArgumentArray final : public Instruction {
@@ -1891,7 +1891,7 @@ private:
     ClassExpression const& m_class_expression;
     Optional<IdentifierTableIndex> m_lhs_name;
     size_t m_element_keys_count { 0 };
-    Optional<Operand> m_element_keys[];
+    Optional<Operand> m_element_keys[0];
 };
 
 class NewFunction final : public Instruction {

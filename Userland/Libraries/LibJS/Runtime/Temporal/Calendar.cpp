@@ -380,7 +380,7 @@ ThrowCompletionOr<PlainDate*> calendar_date_add(VM& vm, Object& calendar, Value 
         date_add = TRY(Value(&calendar).get_method(vm, vm.names.dateAdd));
 
     // 5. Let addedDate be ? Call(dateAdd, calendar, « date, duration, options »).
-    auto added_date = TRY(call(vm, date_add ?: js_undefined(), &calendar, date, &duration, options ?: js_undefined()));
+    auto added_date = TRY(call(vm, date_add ? date_add : js_undefined(), &calendar, date, &duration, options ? options : js_undefined()));
 
     // 6. Perform ? RequireInternalSlot(addedDate, [[InitializedTemporalDate]]).
     auto added_date_object = TRY(added_date.to_object(vm));
@@ -728,7 +728,7 @@ ThrowCompletionOr<PlainDate*> calendar_date_from_fields(VM& vm, Object& calendar
     // 1. If options is not present, set options to undefined.
 
     // 2. Let date be ? Invoke(calendar, "dateFromFields", « fields, options »).
-    auto date = TRY(Value(&calendar).invoke(vm, vm.names.dateFromFields, &fields, options ?: js_undefined()));
+    auto date = TRY(Value(&calendar).invoke(vm, vm.names.dateFromFields, &fields, options ? options : js_undefined()));
 
     // 3. Perform ? RequireInternalSlot(date, [[InitializedTemporalDate]]).
     auto date_object = TRY(date.to_object(vm));
@@ -745,7 +745,7 @@ ThrowCompletionOr<PlainYearMonth*> calendar_year_month_from_fields(VM& vm, Objec
     // 1. If options is not present, set options to undefined.
 
     // 2. Let yearMonth be ? Invoke(calendar, "yearMonthFromFields", « fields, options »).
-    auto year_month = TRY(Value(&calendar).invoke(vm, vm.names.yearMonthFromFields, &fields, options ?: js_undefined()));
+    auto year_month = TRY(Value(&calendar).invoke(vm, vm.names.yearMonthFromFields, &fields, options ? options : js_undefined()));
 
     // 3. Perform ? RequireInternalSlot(yearMonth, [[InitializedTemporalYearMonth]]).
     auto year_month_object = TRY(year_month.to_object(vm));
@@ -762,7 +762,7 @@ ThrowCompletionOr<PlainMonthDay*> calendar_month_day_from_fields(VM& vm, Object&
     // 1. If options is not present, set options to undefined.
 
     // 2. Let monthDay be ? Invoke(calendar, "monthDayFromFields", « fields, options »).
-    auto month_day = TRY(Value(&calendar).invoke(vm, vm.names.monthDayFromFields, &fields, options ?: js_undefined()));
+    auto month_day = TRY(Value(&calendar).invoke(vm, vm.names.monthDayFromFields, &fields, options ? options : js_undefined()));
 
     // 3. Perform ? RequireInternalSlot(monthDay, [[InitializedTemporalMonthDay]]).
     auto month_day_object = TRY(month_day.to_object(vm));

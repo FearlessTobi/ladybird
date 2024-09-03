@@ -58,6 +58,8 @@ add_cxx_compile_options(-Wimplicit-fallthrough)
 add_cxx_compile_options(-Wmissing-declarations)
 add_cxx_compile_options(-Wsuggest-override)
 
+add_cxx_compile_options(-Wno-dollar-in-identifier-extension)
+add_cxx_compile_options(-Wno-extra-semi)
 add_cxx_compile_options(-Wno-invalid-offsetof)
 add_cxx_compile_options(-Wno-unknown-warning-option)
 add_cxx_compile_options(-Wno-unused-command-line-argument)

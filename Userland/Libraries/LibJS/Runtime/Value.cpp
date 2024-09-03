@@ -319,7 +319,7 @@ NonnullGCPtr<PrimitiveString> Value::typeof_(VM& vm) const
     if (is_number())
         return *vm.typeof_strings.number;
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     // 4. If val is undefined, return "undefined".
     case UNDEFINED_TAG:
         return *vm.typeof_strings.undefined;
@@ -359,7 +359,7 @@ String Value::to_string_without_side_effects() const
     if (is_double())
         return number_to_string(m_value.as_double);
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     case UNDEFINED_TAG:
         return "undefined"_string;
     case NULL_TAG:
@@ -399,7 +399,7 @@ ThrowCompletionOr<String> Value::to_string(VM& vm) const
     if (is_double())
         return number_to_string(m_value.as_double);
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     // 1. If argument is a String, return argument.
     case STRING_TAG:
         return as_string().utf8_string();
@@ -467,7 +467,7 @@ bool Value::to_boolean_slow_case() const
         return m_value.as_double != 0;
     }
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     // 1. If argument is a Boolean, return argument.
     case BOOLEAN_TAG:
         return as_bool();
@@ -558,7 +558,7 @@ ThrowCompletionOr<NonnullGCPtr<Object>> Value::to_object(VM& vm) const
         return NumberObject::create(realm, as_double());
     }
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     // Undefined
     // Null
     case UNDEFINED_TAG:
@@ -698,7 +698,7 @@ ThrowCompletionOr<Value> Value::to_number_slow_case(VM& vm) const
     if (is_number())
         return *this;
 
-    switch (m_value.tag) {
+    switch (m_value.parts.tag) {
     // 2. If argument is either a Symbol or a BigInt, throw a TypeError exception.
     case SYMBOL_TAG:
         return vm.throw_completion<TypeError>(ErrorType::Convert, "symbol", "number");
@@ -748,7 +748,7 @@ ThrowCompletionOr<NonnullGCPtr<BigInt>> Value::to_bigint(VM& vm) const
         return vm.throw_completion<TypeError>(ErrorType::Convert, "number", "BigInt");
     }
 
-    switch (primitive.m_value.tag) {
+    switch (primitive.m_value.parts.tag) {
     // Undefined
     case UNDEFINED_TAG:
         // Throw a TypeError exception.

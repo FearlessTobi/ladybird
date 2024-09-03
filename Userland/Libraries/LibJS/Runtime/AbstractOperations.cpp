@@ -430,7 +430,7 @@ NonnullGCPtr<FunctionEnvironment> new_function_environment(ECMAScriptFunctionObj
         env->set_this_binding_status(FunctionEnvironment::ThisBindingStatus::Uninitialized);
 
     // 5. Set env.[[NewTarget]] to newTarget.
-    env->set_new_target(new_target ?: js_undefined());
+    env->set_new_target(new_target ? new_target : js_undefined());
 
     // 6. Set env.[[OuterEnv]] to F.[[Environment]].
     // NOTE: Done in step 1 via the FunctionEnvironment constructor.

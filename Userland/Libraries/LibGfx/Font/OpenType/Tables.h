@@ -435,7 +435,7 @@ static_assert(AssertSize<FeatureRecord, 6>());
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#feature-list-table
 struct [[gnu::packed]] FeatureList {
     Uint16 feature_count;
-    FeatureRecord feature_records[];
+    FeatureRecord feature_records[0];
 };
 static_assert(AssertSize<FeatureList, 2>());
 
@@ -443,7 +443,7 @@ static_assert(AssertSize<FeatureList, 2>());
 struct [[gnu::packed]] Feature {
     Offset16 feature_params_offset;
     Uint16 lookup_index_count;
-    Uint16 lookup_list_indices[];
+    Uint16 lookup_list_indices[0];
 };
 static_assert(AssertSize<Feature, 4>());
 
@@ -452,14 +452,14 @@ struct [[gnu::packed]] Lookup {
     Uint16 lookup_type;
     Uint16 lookup_flag;
     Uint16 subtable_count;
-    Offset16 subtable_offsets[];
+    Offset16 subtable_offsets[0];
 };
 static_assert(AssertSize<Lookup, 6>());
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-list-table
 struct [[gnu::packed]] LookupList {
     Uint16 lookup_count;
-    Offset16 lookup_offsets[];
+    Offset16 lookup_offsets[0];
 };
 static_assert(AssertSize<LookupList, 2>());
 
@@ -467,7 +467,7 @@ static_assert(AssertSize<LookupList, 2>());
 struct [[gnu::packed]] CoverageFormat1 {
     Uint16 coverage_format;
     Uint16 glyph_count;
-    Uint16 glyph_array[];
+    Uint16 glyph_array[0];
 };
 static_assert(AssertSize<CoverageFormat1, 4>());
 
@@ -483,7 +483,7 @@ static_assert(AssertSize<RangeRecord, 6>());
 struct [[gnu::packed]] CoverageFormat2 {
     Uint16 coverage_format;
     Uint16 range_count;
-    RangeRecord range_records[];
+    RangeRecord range_records[0];
 };
 static_assert(AssertSize<CoverageFormat2, 4>());
 
@@ -499,7 +499,7 @@ static_assert(AssertSize<ClassRangeRecord, 6>());
 struct [[gnu::packed]] ClassDefFormat2 {
     Uint16 class_format;
     Uint16 class_range_count;
-    ClassRangeRecord class_range_records[];
+    ClassRangeRecord class_range_records[0];
 };
 static_assert(AssertSize<ClassDefFormat2, 4>());
 
@@ -513,7 +513,7 @@ static_assert(AssertSize<ScriptRecord, 6>());
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#script-list-table-and-script-record
 struct [[gnu::packed]] ScriptList {
     Uint16 script_count;
-    ScriptRecord script_records[];
+    ScriptRecord script_records[0];
 };
 static_assert(AssertSize<ScriptList, 2>());
 
@@ -537,7 +537,7 @@ public:
         Uint16 value_format1;
         Uint16 value_format2;
         Uint16 pair_set_count;
-        Offset16 pair_set_offsets[];
+        Offset16 pair_set_offsets[0];
     };
     static_assert(AssertSize<PairPosFormat1, 10>());
 

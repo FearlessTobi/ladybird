@@ -642,13 +642,13 @@ public:
     // the device's PCS happens to be PCSXYZ or PCSLAB.)
     struct XYZOrLAB {
         union {
-            struct {
+            struct XYZ {
                 u16 x, y, z;
             } xyz;
-            struct {
+            struct LAB {
                 u16 L, a, b;
             } lab;
-        };
+        } data;
     };
 
     NamedColor2TagData(u32 offset, u32 size, u32 vendor_specific_flag, u32 number_of_device_coordinates, String prefix, String suffix,

@@ -283,7 +283,7 @@ protected:
             swap(node->color, successor_node->color);
         }
 
-        auto* child = node->left_child ?: node->right_child;
+        auto* child = node->left_child ? node->left_child : node->right_child;
 
         if (child)
             child->parent = node->parent;

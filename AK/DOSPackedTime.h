@@ -11,23 +11,27 @@
 
 namespace AK {
 
+struct PackedTimeFields {
+    u16 second : 5;
+    u16 minute : 6;
+    u16 hour : 5;
+};
+
 union DOSPackedTime {
     u16 value;
-    struct {
-        u16 second : 5;
-        u16 minute : 6;
-        u16 hour : 5;
-    };
+    PackedTimeFields fields;
 };
 static_assert(sizeof(DOSPackedTime) == 2);
 
+struct PackedDateFields {
+    u16 day : 5;
+    u16 month : 4;
+    u16 year : 7;
+};
+
 union DOSPackedDate {
     u16 value;
-    struct {
-        u16 day : 5;
-        u16 month : 4;
-        u16 year : 7;
-    };
+    PackedDateFields fields;
 };
 static_assert(sizeof(DOSPackedDate) == 2);
 

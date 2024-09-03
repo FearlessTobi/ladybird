@@ -49,9 +49,9 @@ FloatingPointExponentialForm inner_convert_floating_point_to_decimal_exponential
 
     Extractor bit_representation { .d = value };
 
-    bool sign = bit_representation.sign;
-    i32 exponent = bit_representation.exponent;
-    u64 mantissa = bit_representation.mantissa;
+    bool sign = bit_representation.fields.sign;
+    i32 exponent = bit_representation.fields.exponent;
+    u64 mantissa = bit_representation.fields.mantissa;
 
     // For +0, it is {.sign = 0, fraction = 0, exponent = 0},
     // for -0, is {.sign = 1, fraction = 0, exponent = 0},

@@ -29,16 +29,18 @@ enum class ZlibCompressionLevel : u8 {
     Best,
 };
 
+struct ZlibHeaderFields {
+    ZlibCompressionMethod compression_method : 4;
+    u8 compression_info : 4;
+
+    u8 check_bits : 5;
+    bool present_dictionary : 1;
+    ZlibCompressionLevel compression_level : 2;
+};
+
 struct ZlibHeader {
     union {
-        struct {
-            ZlibCompressionMethod compression_method : 4;
-            u8 compression_info : 4;
-
-            u8 check_bits : 5;
-            bool present_dictionary : 1;
-            ZlibCompressionLevel compression_level : 2;
-        };
+        ZlibHeaderFields fields;
         NetworkOrdered<u16> as_u16;
     };
 };

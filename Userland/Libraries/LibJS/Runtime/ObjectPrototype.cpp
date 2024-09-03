@@ -314,7 +314,7 @@ JS_DEFINE_NATIVE_FUNCTION(ObjectPrototype::lookup_getter)
         if (desc.has_value()) {
             // i. If IsAccessorDescriptor(desc) is true, return desc.[[Get]].
             if (desc->is_accessor_descriptor())
-                return *desc->get ?: js_undefined();
+                return *desc->set ? *desc->set : js_undefined();
 
             // ii. Return undefined.
             return js_undefined();
@@ -348,7 +348,7 @@ JS_DEFINE_NATIVE_FUNCTION(ObjectPrototype::lookup_setter)
         if (desc.has_value()) {
             // i. If IsAccessorDescriptor(desc) is true, return desc.[[Set]].
             if (desc->is_accessor_descriptor())
-                return *desc->set ?: js_undefined();
+                return *desc->set ? *desc->set : js_undefined();
 
             // ii. Return undefined.
             return js_undefined();

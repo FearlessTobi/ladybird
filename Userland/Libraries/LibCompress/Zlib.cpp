@@ -19,10 +19,10 @@ ErrorOr<NonnullOwnPtr<ZlibDecompressor>> ZlibDecompressor::create(MaybeOwned<Str
 {
     auto header = TRY(stream->read_value<ZlibHeader>());
 
-    if (header.compression_method != ZlibCompressionMethod::Deflate || header.compression_info > 7)
+    if (header.fields.compression_method != ZlibCompressionMethod::Deflate || header.fields.compression_info > 7)
         return Error::from_string_literal("Non-DEFLATE compression inside Zlib is not supported");
 
-    if (header.present_dictionary)
+    if (header.fields.present_dictionary)
         return Error::from_string_literal("Zlib compression with a pre-defined dictionary is currently not supported");
 
     if (header.as_u16 % 31 != 0)
@@ -98,13 +98,15 @@ ErrorOr<void> ZlibCompressor::write_header(ZlibCompressionMethod compression_met
     }
 
     ZlibHeader header {
-        .compression_method = compression_method,
-        .compression_info = compression_info,
-        .check_bits = 0,
-        .present_dictionary = false,
-        .compression_level = compression_level,
+        .fields = {
+            .compression_method = compression_method,
+            .compression_info = compression_info,
+            .check_bits = 0,
+            .present_dictionary = false,
+            .compression_level = compression_level,
+        }
     };
-    header.check_bits = 0b11111 - header.as_u16 % 31;
+    header.fields.check_bits = 0b11111 - header.as_u16 % 31;
 
     // FIXME: Support pre-defined dictionaries.
 

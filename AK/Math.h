@@ -758,10 +758,10 @@ constexpr T log2(T x)
         return NaN<T>;
 
     FloatExtractor<T> ext { .d = x };
-    T exponent = ext.exponent - FloatExtractor<T>::exponent_bias;
+    T exponent = ext.fields.exponent - FloatExtractor<T>::exponent_bias;
 
     // When the mantissa shows 0b00 (implicitly 1.0) we are on a power of 2
-    if (ext.mantissa == 0)
+    if (ext.fields.mantissa == 0)
         return exponent;
 
     // FIXME: Handle denormalized numbers separately
@@ -769,17 +769,21 @@ constexpr T log2(T x)
     // (1 <= mantissa < 2)
     T m;
     if constexpr (HostIsLittleEndian) {
-        m = ((FloatExtractor<T>) {
-                 .mantissa = ext.mantissa,
-                 .exponent = FloatExtractor<T>::exponent_bias,
-                 .sign = ext.sign })
-                .d;
+        FloatExtractor<T> temp = {
+            .fields = {
+                .mantissa = ext.fields.mantissa,
+                .exponent = FloatExtractor<T>::exponent_bias,
+                .sign = ext.fields.sign }
+        };
+        m = temp.d;
     } else {
-        m = ((FloatExtractor<T>) {
-                 .sign = ext.sign,
-                 .exponent = FloatExtractor<T>::exponent_bias,
-                 .mantissa = ext.mantissa })
-                .d;
+        FloatExtractor<T> temp = {
+            .fields = {
+                .sign = ext.fields.sign,
+                .exponent = FloatExtractor<T>::exponent_bias,
+                .mantissa = ext.fields.mantissa }
+        };
+        m = temp.d;
     }
 
     // This is a reconstruction of one of Sun's algorithms

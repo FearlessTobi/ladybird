@@ -408,9 +408,9 @@ static ErrorOr<ByteBuffer> encode_named_color_2(NamedColor2TagData const& tag_da
         memcpy(record, tag_data.root_name(i).bytes().data(), tag_data.root_name(i).bytes().size());
 
         auto* components = bit_cast<BigEndian<u16>*>(record + 32);
-        components[0] = tag_data.pcs_coordinates(i).xyz.x;
-        components[1] = tag_data.pcs_coordinates(i).xyz.y;
-        components[2] = tag_data.pcs_coordinates(i).xyz.z;
+        components[0] = tag_data.pcs_coordinates(i).data.xyz.x;
+        components[1] = tag_data.pcs_coordinates(i).data.xyz.y;
+        components[2] = tag_data.pcs_coordinates(i).data.xyz.z;
         for (size_t j = 0; j < tag_data.number_of_device_coordinates(); ++j)
             components[3 + j] = tag_data.device_coordinates(i)[j];
 

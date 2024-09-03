@@ -301,7 +301,7 @@ void ArgsParser::print_usage_markdown(FILE* file, StringView argv0)
         //        requires an argument. This should be disallowed as it will
         //        currently display a blank name after the option.
         if (opt.argument_mode == OptionArgumentMode::Required)
-            out(file, " [{} {}]", opt.name_for_display(), opt.value_name ?: "");
+            out(file, " [{} {}]", opt.name_for_display(), opt.value_name ? opt.value_name : "");
         else if (opt.argument_mode == OptionArgumentMode::Optional)
             out(file, " [{}[{}{}]]", opt.name_for_display(), opt.long_name ? "="sv : ""sv, opt.value_name);
         else

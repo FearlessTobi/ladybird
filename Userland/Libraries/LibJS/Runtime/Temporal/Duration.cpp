@@ -574,7 +574,7 @@ ThrowCompletionOr<TimeDurationRecord> balance_duration(VM& vm, double days, doub
     // 4. If largestUnit is one of "year", "month", "week", or "day", then
     if (largest_unit.is_one_of("year"sv, "month"sv, "week"sv, "day"sv)) {
         // a. Let result be ? NanosecondsToDays(nanoseconds, relativeTo).
-        auto result = TRY(nanoseconds_to_days(vm, total_nanoseconds, relative_to ?: js_undefined()));
+        auto result = TRY(nanoseconds_to_days(vm, total_nanoseconds, relative_to ? relative_to : js_undefined()));
 
         // b. Set days to result.[[Days]].
         days = result.days;

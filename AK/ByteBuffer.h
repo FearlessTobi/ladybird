@@ -43,7 +43,7 @@ public:
     {
         if (this != &other) {
             if (!m_inline)
-                kfree_sized(m_outline_buffer, m_outline_capacity);
+                kfree_sized(outline_buffer.m_outline_buffer, outline_buffer.m_outline_capacity);
             move_from(move(other));
         }
         return *this;
@@ -140,9 +140,9 @@ public:
 #endif
     [[nodiscard]] u8* data()
     {
-        return m_inline ? m_inline_buffer : m_outline_buffer;
+        return m_inline ? m_inline_buffer : outline_buffer.m_outline_buffer;
     }
-    [[nodiscard]] u8 const* data() const { return m_inline ? m_inline_buffer : m_outline_buffer; }
+    [[nodiscard]] u8 const* data() const { return m_inline ? m_inline_buffer : outline_buffer.m_outline_buffer; }
 #ifdef AK_COMPILER_GCC
 #    pragma GCC diagnostic pop
 #endif
@@ -173,7 +173,7 @@ public:
     void clear()
     {
         if (!m_inline) {
-            kfree_sized(m_outline_buffer, m_outline_capacity);
+            kfree_sized(outline_buffer.m_outline_buffer, outline_buffer.m_outline_capacity);
             m_inline = true;
         }
         m_size = 0;
@@ -301,7 +301,7 @@ public:
     operator Bytes() { return bytes(); }
     operator ReadonlyBytes() const { return bytes(); }
 
-    ALWAYS_INLINE size_t capacity() const { return m_inline ? inline_capacity : m_outline_capacity; }
+    ALWAYS_INLINE size_t capacity() const { return m_inline ? inline_capacity : outline_buffer.m_outline_capacity; }
     ALWAYS_INLINE bool is_inline() const { return m_inline; }
 
     struct OutlineBuffer {
@@ -326,8 +326,8 @@ private:
         m_size = other.m_size;
         m_inline = other.m_inline;
         if (!other.m_inline) {
-            m_outline_buffer = other.m_outline_buffer;
-            m_outline_capacity = other.m_outline_capacity;
+            outline_buffer.m_outline_buffer = other.outline_buffer.m_outline_buffer;
+            outline_buffer.m_outline_capacity = other.outline_buffer.m_outline_capacity;
         } else {
             VERIFY(other.m_size <= inline_capacity);
             __builtin_memcpy(m_inline_buffer, other.m_inline_buffer, other.m_size);
@@ -339,11 +339,11 @@ private:
     NEVER_INLINE void shrink_into_inline_buffer(size_t size, bool may_discard_existing_data)
     {
         // m_inline_buffer and m_outline_buffer are part of a union, so save the pointer
-        auto* outline_buffer = m_outline_buffer;
-        auto outline_capacity = m_outline_capacity;
+        auto* free_outline_buffer = outline_buffer.m_outline_buffer;
+        auto outline_capacity = outline_buffer.m_outline_capacity;
         if (!may_discard_existing_data)
-            __builtin_memcpy(m_inline_buffer, outline_buffer, size);
-        kfree_sized(outline_buffer, outline_capacity);
+            __builtin_memcpy(m_inline_buffer, free_outline_buffer, size);
+        kfree_sized(free_outline_buffer, outline_capacity);
         m_inline = true;
     }
 
@@ -362,23 +362,25 @@ private:
 
         if (m_inline) {
             __builtin_memcpy(new_buffer, data(), m_size);
-        } else if (m_outline_buffer) {
-            __builtin_memcpy(new_buffer, m_outline_buffer, min(new_capacity, m_outline_capacity));
-            kfree_sized(m_outline_buffer, m_outline_capacity);
+        } else if (outline_buffer.m_outline_buffer) {
+            __builtin_memcpy(new_buffer, outline_buffer.m_outline_buffer, min(new_capacity, outline_buffer.m_outline_capacity));
+            kfree_sized(outline_buffer.m_outline_buffer, outline_buffer.m_outline_capacity);
         }
 
-        m_outline_buffer = new_buffer;
-        m_outline_capacity = new_capacity;
+        outline_buffer.m_outline_buffer = new_buffer;
+        outline_buffer.m_outline_capacity = new_capacity;
         m_inline = false;
         return {};
     }
 
+    struct UnionOutlineBuffer {
+        u8* m_outline_buffer;
+        size_t m_outline_capacity;
+    };
+
     union {
         u8 m_inline_buffer[inline_capacity];
-        struct {
-            u8* m_outline_buffer;
-            size_t m_outline_capacity;
-        };
+        UnionOutlineBuffer outline_buffer;
     };
     size_t m_size { 0 };
     bool m_inline { true };
